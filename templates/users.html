@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Users{% endblock %}
+{% block body %}
+<div class="head"><h1>Users</h1><a class="btn" href="{{ url_for('user_form', kind=kind) }}">Add {{ kind }}</a></div>
+<div class="tabs"><a class="{{ 'on' if kind == 'doctor' }}" href="?kind=doctor">Doctors</a><a class="{{ 'on' if kind == 'patient' }}" href="?kind=patient">Patients</a></div>
+<input type="search" placeholder="Search {{ kind }}s" data-filter="#list" aria-label="Search">
+{% if not rows %}<p class="empty">No {{ kind }}s yet. Add the first one.</p>{% else %}
+<table class="stack" id="list"><thead><tr><th>ID</th><th>Name</th>
+{% if kind == 'doctor' %}<th>Specialization</th><th>Hospital</th>{% else %}<th>Age</th><th>Blood group</th><th>Phone</th>{% endif %}<th></th></tr></thead><tbody>
+{% for u in rows %}<tr data-row>
+<td data-label="ID" class="mono">{{ u.id|dc if kind == 'doctor' else u.id|pt }}</td><td data-label="Name">{{ u.name }}</td>
+{% if kind == 'doctor' %}<td data-label="Specialization">{{ u.specialization }}</td><td data-label="Hospital">{{ u.hospital }}</td>
+{% else %}<td data-label="Age">{{ u.dob|age }}</td><td data-label="Blood group">{{ u.blood_group or '—' }}</td><td data-label="Phone">{{ u.phone or '—' }}</td>{% endif %}
+<td class="act"><a href="{{ url_for('user_form', kind=kind, uid=u.id) }}">Edit</a>
+<form method="post" action="{{ url_for('user_delete', kind=kind, uid=u.id) }}" data-confirm="Delete {{ u.name }}? This cannot be undone."><button class="link danger">Delete</button></form></td></tr>{% endfor %}
+</tbody></table><p class="empty hide" id="none">No match.</p>{% endif %}{% endblock %}

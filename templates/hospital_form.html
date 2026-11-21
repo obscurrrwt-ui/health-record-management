@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% from "macros.html" import field, area %}{% block title %}Hospital{% endblock %}
+{% block body %}<h1>{{ 'Edit' if hid else 'Add' }} hospital</h1>
+<form method="post" class="form">{{ field('Name', 'name', v.name, required=true) }}{{ field('City', 'city', v.city, required=true) }}
+{{ field('Phone', 'phone', v.phone, 'tel') }}{{ area('Address', 'address', v.address) }}
+<div class="actions"><button class="btn">Save</button><a href="{{ url_for('hospitals') }}">Cancel</a></div></form>{% endblock %}

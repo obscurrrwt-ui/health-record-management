@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}Reports{% endblock %}
+{% block body %}
+<h1>Reports</h1>
+<form class="filters no-print" method="get">
+<label class="f"><span>From</span><input type="date" name="start" value="{{ start }}"></label>
+<label class="f"><span>To</span><input type="date" name="end" value="{{ end }}"></label>
+<label class="f"><span>Hospital</span><select name="hospital"><option value="">All hospitals</option>{% for h in hospitals %}<option value="{{ h.id }}" {{ 'selected' if hosp == h.id }}>{{ h.name }}</option>{% endfor %}</select></label>
+<button class="btn">Update</button></form>
+<div class="actions no-print"><button class="link" onclick="window.print()">Print</button>
+<a href="{{ url_for('reports', start=start, end=end, hospital=hosp or '', csv=1) }}">Download CSV</a></div>
+<p class="muted">{{ start|d }} to {{ end|d }}</p>
+{% if not data.totals.visits %}<p class="empty">No visits in this range. Try a wider date range.</p>{% else %}
+<dl class="stats"><div><dt>Total visits</dt><dd class="mono">{{ data.totals.visits }}</dd></div><div><dt>Patients seen</dt><dd class="mono">{{ data.totals.patients }}</dd></div></dl>
+{% for title, rows in [('Common diagnoses', data.diagnoses), ('Record status', data.by_status), ('Visits per doctor', data.by_doctor), ('Visits per month', data.by_month)] %}
+<h2>{{ title }}</h2><table class="plain"><tbody>{% for r in rows %}<tr><td>{{ r.name }}</td><td class="mono num">{{ r.n }}</td></tr>{% endfor %}</tbody></table>{% endfor %}
+{% endif %}{% endblock %}

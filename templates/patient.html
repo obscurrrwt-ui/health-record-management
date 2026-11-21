@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% from "macros.html" import chip %}{% block title %}My health{% endblock %}
+{% block body %}
+<h1>{{ p.name }}</h1>
+<p class="muted"><span class="mono">{{ p.id|pt }}</span> · Age {{ p.dob|age }} · Blood group {{ p.blood_group or 'unknown' }}</p>
+{% if p.allergies %}<p class="warn">Allergies: {{ p.allergies }}</p>{% endif %}
+{% if due %}<p class="note">Follow-up coming up: {% for r in due %}<a href="{{ url_for('record_view', rid=r.id) }}">{{ r.follow_up_date|d }}</a>{% if r.follow_up_date < today %} (overdue){% endif %}{{ ', ' if not loop.last }}{% endfor %}</p>{% endif %}
+<div class="tabs"><a class="{{ 'on' if tab == 'records' }}" href="?tab=records">Records</a><a class="{{ 'on' if tab == 'prescriptions' }}" href="?tab=prescriptions">Prescriptions</a><a class="{{ 'on' if tab == 'reports' }}" href="?tab=reports">Reports</a></div>
+{% if tab == 'prescriptions' %}
+{% if not rx %}<p class="empty">No prescriptions yet.</p>{% else %}<table class="stack"><thead><tr><th>Date</th><th>Medicine</th><th>Dosage</th><th>How often</th><th>Duration</th></tr></thead><tbody>
+{% for x in rx %}<tr><td data-label="Date">{{ x.visit_date|d }}</td><td data-label="Medicine">{{ x.medicine }}</td><td data-label="Dosage">{{ x.dosage or '—' }}</td><td data-label="How often">{{ x.frequency or '—' }}</td><td data-label="Duration">{{ x.duration or '—' }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+{% elif tab == 'reports' %}
+{% if not files %}<p class="empty">No reports have been uploaded for you.</p>{% endif %}
+<ul class="plainlist">{% for f in files %}<li><a href="{{ url_for('download', fid=f.id) }}">{{ f.title }}</a> <span class="muted">{{ f.visit_date|d }}</span></li>{% endfor %}</ul>
+{% else %}
+{% if not recs %}<p class="empty">No visits are recorded yet.</p>{% else %}<table class="stack"><thead><tr><th>Record</th><th>Date</th><th>Doctor</th><th>Diagnosis</th><th>Status</th></tr></thead><tbody>
+{% for r in recs %}<tr><td data-label="Record" class="mono"><a href="{{ url_for('record_view', rid=r.id) }}">{{ r.id|rc }}</a></td><td data-label="Date">{{ r.visit_date|d }}</td><td data-label="Doctor">{{ r.dname }}</td><td data-label="Diagnosis">{{ r.diagnosis }}</td><td data-label="Status">{{ chip(r.status) }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+{% endif %}{% endblock %}

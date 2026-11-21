@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% from "macros.html" import chip %}{% block title %}{{ r.id|rc }}{% endblock %}
+{% block body %}
+<div class="head"><h1><span class="mono">{{ r.id|rc }}</span> · {{ r.pname }}</h1>
+<span>{% if can_edit %}<a class="btn" href="{{ url_for('record_edit', rid=r.id) }}">Edit</a> {% endif %}<a class="btn ghost" href="{{ url_for('record_sheet', rid=r.id) }}" target="_blank">Print sheet</a></span></div>
+<p class="muted">{{ r.visit_date|d }} · {{ r.dname }}, {{ r.specialization }} · {{ r.hname }} {{ chip(r.status) }}</p>
+{% if r.allergies and session.role != 'patient' %}<p class="warn">Allergies: {{ r.allergies }}</p>{% endif %}
+<dl class="facts"><div><dt>Complaint</dt><dd>{{ r.complaint }}</dd></div><div><dt>Diagnosis</dt><dd>{{ r.diagnosis }}</dd></div>
+<div><dt>Vitals</dt><dd class="mono">BP {{ r.bp or '—' }} · Pulse {{ r.pulse or '—' }} · Temp {{ r.temperature or '—' }} °C · Weight {{ r.weight or '—' }} kg</dd></div>
+<div><dt>Notes</dt><dd>{{ r.notes or '—' }}</dd></div><div><dt>Follow-up</dt><dd>{{ r.follow_up_date|d }}{% if r.follow_up_date and r.status != 'Resolved' and r.follow_up_date < today %} <span class="chip overdue">Overdue</span>{% endif %}</dd></div></dl>
+<h2>Prescriptions</h2>{% if not rx %}<p class="empty">No medicines were prescribed at this visit.</p>{% else %}
+<table class="stack"><thead><tr><th>Medicine</th><th>Dosage</th><th>How often</th><th>Duration</th></tr></thead><tbody>
+{% for x in rx %}<tr><td data-label="Medicine">{{ x.medicine }}</td><td data-label="Dosage">{{ x.dosage or '—' }}</td><td data-label="How often">{{ x.frequency or '—' }}</td><td data-label="Duration">{{ x.duration or '—' }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+<h2>Reports</h2>{% if not files %}<p class="empty">No reports uploaded.</p>{% endif %}
+<ul class="plainlist">{% for f in files %}<li><a href="{{ url_for('download', fid=f.id) }}">{{ f.title }}</a> <span class="muted">{{ f.uploaded_at|d }}</span></li>{% endfor %}</ul>
+{% if can_edit %}<form method="post" action="{{ url_for('upload', rid=r.id) }}" enctype="multipart/form-data" class="form upload">
+<label class="f"><span>Report title</span><input name="title" placeholder="e.g. Blood test results"></label>
+<label class="f"><span>File (PDF, PNG or JPG, up to 8 MB)</span><input type="file" name="file" accept=".pdf,.png,.jpg,.jpeg" required></label>
+<button class="btn">Upload report</button></form>{% endif %}
+{% endblock %}

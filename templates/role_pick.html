@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Choose {{ r }}{% endblock %}
+{% block body %}
+<h1>Who are you?</h1>
+<input type="search" placeholder="Search by name" data-filter="#plist" aria-label="Search people">
+{% if not people %}<p class="empty">Nobody here yet. Ask an administrator to add {{ r }}s first.</p>{% endif %}
+<ul class="roles" id="plist">
+{% for x in people %}<li data-row><form method="post" action="{{ url_for('choose') }}">
+<input type="hidden" name="role" value="{{ r }}"><input type="hidden" name="uid" value="{{ x.id }}">
+<button class="rowbtn"><strong>{{ x.name }}</strong><span>{{ [x.sub, x.extra]|select|join(' · ') }}</span></button></form></li>{% endfor %}
+</ul>
+<p class="empty hide" id="none">No match.</p>{% endblock %}

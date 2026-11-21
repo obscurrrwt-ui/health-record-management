@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% from "macros.html" import field, area %}{% block title %}{{ 'Edit' if uid else 'Add' }} {{ kind }}{% endblock %}
+{% block body %}
+<h1>{{ 'Edit' if uid else 'Add' }} {{ kind }}</h1>
+<form method="post" class="form">
+{{ field('Full name', 'name', v.name, required=true) }}
+{% if kind == 'doctor' %}
+{{ field('Specialization', 'specialization', v.specialization, required=true) }}
+<label class="f"><span>Hospital (required)</span><select name="hospital_id" required><option value="">Choose a hospital</option>
+{% for h in hospitals %}<option value="{{ h.id }}" {{ 'selected' if v.hospital_id|string == h.id|string }}>{{ h.name }}</option>{% endfor %}</select></label>
+{{ field('Phone', 'phone', v.phone, 'tel') }}{{ field('Email', 'email', v.email, 'email') }}
+{% else %}
+{{ field('Date of birth', 'dob', v.dob, 'date', true) }}
+<label class="f"><span>Gender</span><select name="gender"><option value="">Not stated</option>{% for g in ['Male','Female','Other'] %}<option {{ 'selected' if v.gender == g }}>{{ g }}</option>{% endfor %}</select></label>
+<label class="f"><span>Blood group</span><select name="blood_group"><option value="">Unknown</option>{% for b in ['A+','A-','B+','B-','AB+','AB-','O+','O-'] %}<option {{ 'selected' if v.blood_group == b }}>{{ b }}</option>{% endfor %}</select></label>
+{{ field('Phone', 'phone', v.phone, 'tel') }}{{ area('Address', 'address', v.address) }}
+{{ field('Known allergies', 'allergies', v.allergies, hint='Separate with commas. Doctors see this when they pick the patient.') }}
+{{ field('Emergency contact', 'emergency_contact', v.emergency_contact) }}
+{% endif %}
+<div class="actions"><button class="btn">Save</button><a href="{{ url_for('users', kind=kind) }}">Cancel</a></div>
+</form>{% endblock %}

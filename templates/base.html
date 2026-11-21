@@ -1,1 +1,20 @@
-
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{% endblock %} · Carebook</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head><body>
+<header class="top"><div class="bar">
+<a class="brand" href="{{ url_for('home') }}">Carebook</a>
+{% if session.role %}<nav>
+{% if session.role == 'admin' %}<a href="{{ url_for('users') }}">Users</a><a href="{{ url_for('hospitals') }}">Hospitals</a><a href="{{ url_for('reports') }}">Reports</a>
+{% elif session.role == 'doctor' %}<a href="{{ url_for('doctor_home') }}">My records</a><a href="{{ url_for('record_new') }}">New record</a>
+{% else %}<a href="{{ url_for('patient_home') }}">My health</a>{% endif %}
+<a class="switch" href="{{ url_for('home') }}">{{ who or 'Guest' }} · switch role</a></nav>{% endif %}
+</div></header>
+<main>
+{% with msgs = get_flashed_messages(with_categories=true) %}{% for c, m in msgs %}<p class="flash {{ c }}" role="status">{{ m }}</p>{% endfor %}{% endwith %}
+{% block body %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body></html>

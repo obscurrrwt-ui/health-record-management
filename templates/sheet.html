@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{{ r.id|rc }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body class="sheet"><main>
+<p class="no-print"><button class="btn" onclick="window.print()">Print</button></p>
+<h1>{{ r.hname }}</h1><p class="muted">Visit record {{ r.id|rc }} · {{ r.visit_date|d }}</p>
+<p><strong>{{ r.pname }}</strong> ({{ r.id|string and r.patient_id|pt }}), age {{ r.dob|age }}, {{ r.gender or '' }}, blood group {{ r.blood_group or 'unknown' }}<br>Allergies: {{ r.allergies or 'none recorded' }}</p>
+<p><strong>Doctor:</strong> {{ r.dname }}, {{ r.specialization }}</p>
+<p><strong>Complaint:</strong> {{ r.complaint }}</p>
+<p class="mono">BP {{ r.bp or '—' }} · Pulse {{ r.pulse or '—' }} · Temp {{ r.temperature or '—' }} °C · Weight {{ r.weight or '—' }} kg</p>
+<p><strong>Diagnosis:</strong> {{ r.diagnosis }}</p><p><strong>Notes:</strong> {{ r.notes or '—' }}</p>
+<h2>Prescriptions</h2>{% for x in rx %}<p>{{ x.medicine }} {{ x.dosage or '' }} · {{ x.frequency or '' }} · {{ x.duration or '' }}</p>{% else %}<p>None.</p>{% endfor %}
+<p><strong>Follow-up:</strong> {{ r.follow_up_date|d }}</p></main></body></html>

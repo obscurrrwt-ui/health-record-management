@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% from "macros.html" import field, area, rxrow %}{% block title %}{{ 'Edit record' if rec else 'New record' }}{% endblock %}
+{% block body %}
+<h1>{{ (rec.id|rc ~ ' · Edit') if rec else 'New record' }}</h1>
+<form method="post" class="form" novalidate>
+{% if rec %}<p class="muted">Patient: {{ (patients|selectattr('id', 'equalto', rec.patient_id)|first).name }}</p>
+{% else %}
+<label class="f"><span>Patient (required)</span><input type="search" placeholder="Search patients" data-filter-select="#patient" aria-label="Search patients">
+<select name="patient_id" id="patient" required size="1"><option value="">Choose a patient</option>
+{% for p in patients %}<option value="{{ p.id }}" data-allergies="{{ p.allergies or '' }}" {{ 'selected' if v.patient_id == p.id }}>{{ p.id|pt }} · {{ p.name }} ({{ p.dob|age }})</option>{% endfor %}</select></label>
+<p class="warn hide" id="allergy" role="alert"></p>{% endif %}
+{{ field('Visit date', 'visit_date', v.visit_date, 'date', true) }}
+{{ area('Complaint (required)', 'complaint', v.complaint) }}
+<fieldset><legend>Vitals</legend><div class="grid4">
+{{ field('Blood pressure', 'bp', v.bp, hint='e.g. 120/80') }}{{ field('Pulse (bpm)', 'pulse', v.pulse, 'number') }}
+{{ field('Temperature (°C)', 'temperature', v.temperature, 'number') }}{{ field('Weight (kg)', 'weight', v.weight, 'number') }}</div></fieldset>
+{{ field('Diagnosis', 'diagnosis', v.diagnosis, required=true) }}
+{{ area('Notes', 'notes', v.notes) }}
+<div class="grid2"><label class="f"><span>Status</span><select name="status">{% for s in statuses %}<option {{ 'selected' if v.status == s }}>{{ s }}</option>{% endfor %}</select></label>
+{{ field('Follow-up date', 'follow_up_date', v.follow_up_date, 'date') }}</div>
+<fieldset><legend>Prescriptions</legend><div id="rxlist">{% for x in rx %}{{ rxrow(x) }}{% endfor %}</div>
+<button type="button" class="link" id="addrx">Add a medicine</button></fieldset>
+<template id="rxtpl">{{ rxrow({'medicine': '', 'dosage': '', 'frequency': '', 'duration': ''}) }}</template>
+<div class="actions"><button class="btn">Save record</button><a href="{{ url_for('record_view', rid=rec.id) if rec else url_for('doctor_home') }}">Cancel</a></div>
+</form>{% endblock %}

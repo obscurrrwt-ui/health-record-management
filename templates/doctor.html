@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% from "macros.html" import chip %}{% block title %}My records{% endblock %}
+{% block body %}
+<div class="head"><h1>My records</h1><a class="btn" href="{{ url_for('record_new') }}">New record</a></div>
+{% if due %}<h2>Follow-ups in the next 7 days</h2><ul class="plainlist">
+{% for r in due %}<li><a href="{{ url_for('record_view', rid=r.id) }}">{{ r.pname }}</a> · {{ r.follow_up_date|d }}
+{% if r.follow_up_date < today %}<span class="chip overdue">Overdue</span>{% endif %}</li>{% endfor %}</ul>{% endif %}
+<h2>All visits</h2>
+<form class="filters" method="get"><input type="search" placeholder="Search patient or diagnosis" data-filter="#list" aria-label="Search">
+<select name="status" onchange="this.form.submit()" aria-label="Filter by status"><option value="">Any status</option>{% for s in statuses %}<option {{ 'selected' if s == status }}>{{ s }}</option>{% endfor %}</select></form>
+{% if not rows %}<p class="empty">No records here yet. Start with <a href="{{ url_for('record_new') }}">a new record</a>.</p>{% else %}
+<table class="stack" id="list"><thead><tr><th>Record</th><th>Date</th><th>Patient</th><th>Diagnosis</th><th>Status</th></tr></thead><tbody>
+{% for r in rows %}<tr data-row><td data-label="Record" class="mono"><a href="{{ url_for('record_view', rid=r.id) }}">{{ r.id|rc }}</a></td>
+<td data-label="Date">{{ r.visit_date|d }}</td><td data-label="Patient">{{ r.pname }}</td><td data-label="Diagnosis">{{ r.diagnosis }}</td><td data-label="Status">{{ chip(r.status) }}</td></tr>{% endfor %}
+</tbody></table><p class="empty hide" id="none">No match.</p>{% endif %}{% endblock %}

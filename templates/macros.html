@@ -1,0 +1,16 @@
+{% macro chip(s) %}<span class="chip {{ s|lower|replace(' ','-')|replace('-','') }}">{{ s }}</span>{% endmacro %}
+{% macro field(label, name, value='', type='text', required=false, hint='') %}
+<label class="f"><span>{{ label }}{% if required %} (required){% endif %}</span>
+<input type="{{ type }}" name="{{ name }}" value="{{ value if value is not none else '' }}" {{ 'required' if required }}>
+{% if hint %}<small>{{ hint }}</small>{% endif %}</label>
+{% endmacro %}
+{% macro area(label, name, value='') %}
+<label class="f"><span>{{ label }}</span><textarea name="{{ name }}" rows="3">{{ value if value is not none else '' }}</textarea></label>
+{% endmacro %}
+{% macro rxrow(x) %}
+<div class="rx"><input name="medicine" placeholder="Medicine" value="{{ x.medicine }}" aria-label="Medicine">
+<input name="dosage" placeholder="Dosage" value="{{ x.dosage or '' }}" aria-label="Dosage">
+<input name="frequency" placeholder="How often" value="{{ x.frequency or '' }}" aria-label="Frequency">
+<input name="duration" placeholder="For how long" value="{{ x.duration or '' }}" aria-label="Duration">
+<button type="button" class="link" data-remove>Remove</button></div>
+{% endmacro %}

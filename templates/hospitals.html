@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Hospitals{% endblock %}
+{% block body %}
+<div class="head"><h1>Hospitals</h1><a class="btn" href="{{ url_for('hospital_form') }}">Add hospital</a></div>
+<input type="search" placeholder="Search hospitals" data-filter="#list" aria-label="Search">
+{% if not rows %}<p class="empty">No hospitals yet. Add one so doctors can be linked to it.</p>{% else %}
+<table class="stack" id="list"><thead><tr><th>Name</th><th>City</th><th>Phone</th><th>Doctors</th><th></th></tr></thead><tbody>
+{% for h in rows %}<tr data-row><td data-label="Name">{{ h.name }}</td><td data-label="City">{{ h.city }}</td><td data-label="Phone">{{ h.phone or '—' }}</td><td data-label="Doctors">{{ h.docs }}</td>
+<td class="act"><a href="{{ url_for('hospital_form', hid=h.id) }}">Edit</a>
+<form method="post" action="{{ url_for('hospital_delete', hid=h.id) }}" data-confirm="Delete {{ h.name }}?"><button class="link danger">Delete</button></form></td></tr>{% endfor %}
+</tbody></table><p class="empty hide" id="none">No match.</p>{% endif %}{% endblock %}

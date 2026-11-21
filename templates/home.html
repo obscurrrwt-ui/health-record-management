@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Choose a role{% endblock %}
+{% block body %}
+<h1>Health record management</h1>
+<p class="muted">Choose how you want to use the system. This college project has no login.</p>
+<ul class="roles">
+<li><a href="{{ url_for('choose_role', r='admin') }}"><strong>Administrator</strong><span>Manage doctors, patients and hospitals, and run reports</span></a></li>
+<li><a href="{{ url_for('choose_role', r='doctor') }}"><strong>Doctor</strong><span>Write records and prescriptions, upload reports</span></a></li>
+<li><a href="{{ url_for('choose_role', r='patient') }}"><strong>Patient</strong><span>See your records, prescriptions and reports</span></a></li>
+</ul>{% endblock %}
